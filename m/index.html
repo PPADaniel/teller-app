@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Mahlzeit für Teller</title>
+<style>
+  :root { --bg: #F5F2EA; --fg: #1E2A24; --muted: #5B6660; --primary: #2F6B4F; --on-primary: #fff; --card: #fff; }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #131714; --fg: #E6E3DC; --muted: #A9B2AC; --primary: #96D4B3; --on-primary: #0D2A1D; --card: #1C211E; }
+  }
+  body { margin: 0; background: var(--bg); color: var(--fg); font: 17px/1.5 system-ui, sans-serif; }
+  main { max-width: 420px; margin: 0 auto; padding: 48px 16px; }
+  .card { background: var(--card); border-radius: 20px; padding: 24px; }
+  h1 { font-size: 24px; margin: 0 0 8px; }
+  p { margin: 0 0 16px; color: var(--muted); }
+  .btn { display: block; text-align: center; background: var(--primary); color: var(--on-primary);
+         text-decoration: none; font-weight: 600; padding: 14px; border-radius: 14px; }
+  .small { font-size: 14px; margin-top: 20px; }
+  .small a { color: var(--primary); }
+</style>
+</head>
+<body>
+<main>
+  <div class="card">
+    <h1>🍲 Eine Mahlzeit für dich</h1>
+    <p id="text">Tippe auf den Knopf, dann öffnet sich Teller mit der Mahlzeit, bereit zum Eintragen.</p>
+    <a id="open" class="btn" href="#">In Teller öffnen</a>
+    <p class="small">Noch kein Teller? <a href="https://github.com/PPADaniel/teller-app#readme">So installierst du die App</a></p>
+  </div>
+</main>
+<script>
+  // The meal is in the part after '#': it stays on this phone, the server never sees it.
+  var data = location.hash.slice(1);
+  var btn = document.getElementById('open');
+  if (!/^[A-Za-z0-9_-]{10,}$/.test(data)) {
+    document.getElementById('text').textContent = 'Dieser Link ist unvollständig. Bitte nochmals schicken lassen.';
+    btn.style.display = 'none';
+  } else if (!/Android/i.test(navigator.userAgent)) {
+    document.getElementById('text').textContent = 'Öffne diesen Link auf dem Handy, auf dem Teller installiert ist.';
+    btn.style.display = 'none';
+  } else {
+    var fallback = encodeURIComponent('https://github.com/PPADaniel/teller-app#readme');
+    btn.href = 'intent://meal/' + data + '#Intent;scheme=teller;S.browser_fallback_url=' + fallback + ';end';
+    location.href = btn.href;
+  }
+</script>
+</body>
+</html>
